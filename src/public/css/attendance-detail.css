@@ -1,0 +1,292 @@
+/* ===============================
+Attendance detail（user）
+   =============================== */
+
+:root {
+    --bg: #f2f2f5;
+    --card: #fff;
+    --line: #e9e9ee;
+
+    /* 固定寸法（PC） */
+    --card-w: 920px;
+    /* 白カード幅 */
+    --label-w: 140px;
+    /* 左ラベル幅 */
+    --field-w: 520px;
+    /* 右側フィールドの見かけ幅 */
+    --time-w: 120px;
+    /* <input type="time"> 幅 */
+    --gap: 24px;
+    /* 入力と「〜」の隙間 */
+}
+
+/* ページ余白 */
+.detail-main {
+    background: var(--bg);
+    padding-block: 32px 84px;
+}
+
+.detail-main .container {
+    width: min(1100px, 92%);
+    margin-inline: auto;
+}
+
+/* 見出し（左に黒バー） */
+.page-title {
+    margin: 12px 0 20px;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: .05em;
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+}
+
+.page-title::before {
+    content: "";
+    width: 6px;
+    height: 22px;
+    border-radius: 3px;
+    background: #000;
+}
+
+/* カード */
+.card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.detail-card {
+    width: var(--card-w);
+    margin-inline: auto;
+}
+
+/* 行：左ラベル / 右フィールド */
+.detail-card .row {
+    display: grid;
+    grid-template-columns: var(--label-w) 1fr;
+    align-items: center;
+    min-height: 84px;
+    padding-inline: 24px;
+    border-top: 1px solid var(--line);
+}
+
+.detail-card .row:first-child {
+    border-top: none;
+}
+
+.label {
+    color: #6b6b72;
+    font-weight: 700;
+    letter-spacing: .04em;
+    display: flex;
+    align-items: center;
+}
+
+/* 右側共通ブロック
+   - エラーメッセージを左下に絶対配置するため position:relative
+   - かつ下に余白を確保（常に18px）して重なり防止
+*/
+.value {
+    width: var(--field-w);
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding-bottom: 18px;
+    /* エラー分の逃げ */
+}
+
+/* 名前など等幅っぽく見せる */
+.mono {
+    font-weight: 700;
+    letter-spacing: .06em;
+}
+
+/* 日付（左右2分割で中央寄せ） */
+.value.date-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    place-items: center;
+    width: var(--field-w);
+    font-weight: 700;
+}
+
+/* 出勤・退勤などの横並び */
+.value.time-range {
+    width: var(--field-w);
+    display: grid;
+    grid-template-columns: var(--time-w) auto var(--time-w);
+    align-items: center;
+    justify-items: center;
+    column-gap: var(--gap);
+}
+
+/* 入力 */
+.time-input {
+    width: var(--time-w);
+    height: 36px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+    padding: 6px 10px;
+    text-align: center;
+    font-weight: 700;
+    letter-spacing: .04em;
+}
+
+.sep {
+    color: #777;
+}
+
+/* 備考 */
+.note-input {
+    width: var(--field-w);
+    min-height: 52px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: #fff;
+    padding: 10px 12px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+/* エラーメッセージ（各入力ブロックの左下に固定） */
+.field-error {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    /* .value の padding-bottom と合わせてピッタリ下 */
+    transform: translateY(100%);
+    /* ブロックの外へ */
+    color: #d92b2b;
+    font-size: 12px;
+    line-height: 1.25;
+    letter-spacing: .02em;
+    white-space: nowrap;
+}
+
+/* 送信ボタン行 */
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    padding: 22px 24px 26px;
+    border-top: 1px solid var(--line);
+}
+
+.btn-primary {
+    min-width: 140px;
+    height: 48px;
+    border: none;
+    border-radius: 10px;
+    background: #111;
+    color: #fff;
+    font-weight: 800;
+    letter-spacing: .2em;
+    cursor: pointer;
+}
+
+/* 申請中の注記 */
+/* .pending-note {
+    margin: 10px 24px 22px;
+    color: #c92a2a;
+    font-size: 13px;
+} */
+
+/* 申請中の注意書きをカード右下に寄せて表示 */
+.pending-wrap {
+    width: var(--card-w);
+    margin: 8px auto 0;
+    text-align: right;
+}
+
+.pending-note {
+    display: inline-block;
+    color: #e06161;
+    font-size: 13px;
+    letter-spacing: .02em;
+}
+
+/* スマホでも右寄せ維持 */
+@media (max-width: 960px) {
+    .pending-wrap {
+        width: 92vw;
+    }
+}
+
+/* ============ Responsive ============ */
+
+/* タブレット〜スマホでフィールド幅を自動化して 1 カラム寄りに */
+@media (max-width: 960px) {
+    :root {
+        --card-w: 92vw;
+        --field-w: 100%;
+    }
+
+    .detail-card {
+        border-radius: 14px;
+    }
+}
+
+/* スマホ：ラベル幅を縮め、入力を少し細く */
+@media (max-width: 640px) {
+    :root {
+        --label-w: 120px;
+        --time-w: 110px;
+        --gap: 18px;
+    }
+
+    .detail-card .row {
+        min-height: 76px;
+        padding-inline: 16px;
+    }
+
+    .value,
+    .value.date-split,
+    .value.time-range,
+    .note-input {
+        width: 100%;
+    }
+
+    /* エラー位置はそのまま「左下」維持 */
+}
+
+/* さらに狭い端末で time 幅を詰める */
+@media (max-width: 380px) {
+    :root {
+        --time-w: 100px;
+        --gap: 12px;
+    }
+}
+
+.nav {
+    display: flex;
+    align-items: center;
+    gap: 1.6rem
+}
+
+.nav a {
+    color: #fff;
+    text-decoration: none;
+    opacity: .9
+}
+
+.nav a:hover {
+    opacity: 1
+}
+
+.logout-form button {
+    background: transparent;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font: inherit;
+    opacity: .9
+}
+
+.logout-form button:hover {
+    opacity: 1
+}

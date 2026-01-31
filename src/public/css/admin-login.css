@@ -1,0 +1,35 @@
+.content{
+    width: 40%;
+    margin: 30px auto;
+}
+
+.form__ttl{
+    text-align: center;
+
+}
+.form-group{
+    margin-bottom: 20px;
+}
+.form__input{
+    width: 100%;
+    padding: 10px;
+}
+.error-message{
+    padding: 3px;
+    color: red;
+    font-size: small;
+    height: 30px;
+}
+.submit-btn{
+    display: block;
+    width: 100%;
+    background-color: black;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    padding: 10px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+

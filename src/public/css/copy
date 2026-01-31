@@ -1,0 +1,83 @@
+// ④ スタッフごとに一覧用データを作る
+        foreach ($users as $user) {
+
+            $attendance = $attendanceByUser[$user->id] ?? null;
+
+            // --- 申請中かどうか ---
+            $isPending = false;
+            $payload = [];
+
+            if ($attendance &&
+                $attendance->request &&
+                $attendance->request->status === AttendanceApply::STATUS_PENDING) {
+
+                $isPending = true;
+                $payload = $attendance->request->payload ?? [];
+            }
+
+            // --- 出勤・退勤 ---
+            $clockIn  = '';
+            $clockOut = '';
+
+            if ($isPending) {
+                if (!empty($payload['clock_in_at'])) {
+                    $clockIn = Carbon::parse($payload['clock_in_at'])->format('H:i');
+                }
+                if (!empty($payload['clock_out_at'])) {
+                    $clockOut = Carbon::parse($payload['clock_out_at'])->format('H:i');
+                }
+            } elseif ($attendance) {
+                if ($attendance->clock_in_at) {
+                    $clockIn = $attendance->clock_in_at->format('H:i');
+                }
+                if ($attendance->clock_out_at) {
+                    $clockOut = $attendance->clock_out_at->format('H:i');
+                }
+            }
+
+            // --- 休憩時間の合計（秒） ---
+            $breakSeconds = 0;
+
+            if ($isPending && !empty($payload['breaks'])) {
+                foreach ($payload['breaks'] as $break) {
+                    if (!empty($break['start_at']) && !empty($break['end_at'])) {
+                        $start = Carbon::parse($break['start_at']);
+                        $end   = Carbon::parse($break['end_at']);
+                        $breakSeconds += max(0, $end->diffInSeconds($start));
+                    }
+                }
+            } elseif ($attendance) {
+                foreach ($attendance->breaks as $break) {
+                    if ($break->start_at && $break->end_at) {
+                        $breakSeconds += $break->end_at->diffInSeconds($break->start_at);
+                    }
+                }
+            }
+
+            // --- 合計勤務時間 ---
+            $total = '';
+
+            if ($clockIn !== '' && $clockOut !== '') {
+                $in  = Carbon::parse($clockIn);
+                $out = Carbon::parse($clockOut);
+
+                $workSeconds = max(
+                    0,
+                    $out->diffInSeconds($in) - $breakSeconds
+                );
+
+                $total = gmdate('G:i', $workSeconds);
+            }
+
+            // --- 行データ ---
+            $rows[] = [
+                'user_id'       => $user->id,
+                'name'          => $user->name,
+                'in'            => $clockIn,
+                'out'           => $clockOut,
+                'break'         => gmdate('G:i', $breakSeconds),
+                'total'         => $total,
+                'attendance_id' => $attendance ? $attendance->id : null,
+                'is_pending'    => $isPending,
+            ];
+        }

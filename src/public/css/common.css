@@ -1,0 +1,13 @@
+.header-inner{
+    background-color: black;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+}
+.index-link{
+    width: 20%;
+}
+.logo-image{
+    width: 100%;
+    height: auto;
+}

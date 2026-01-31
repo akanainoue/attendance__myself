@@ -1,0 +1,78 @@
+@extends('layouts.app')
+
+@section('css')
+<link rel="stylesheet" href="{{ asset('css/attendance-list.css') }}">
+@endsection
+
+@section('nav')
+<nav class="nav">
+    <a href="{{ url('/attendance') }}">勤怠</a>
+    <a class="active" href="{{ url('/attendance/list') }}">勤怠一覧</a>
+    <a href="{{ url('/stamp_correction_request/list') }}">申請</a>
+    <form method="POST" action="{{ url('/logout') }}" class="logout-form">
+    @csrf
+        <button class="logout-btn" type="submit">ログアウト</button>
+    </form>
+</nav>
+@endsection
+
+@section('content')
+<main class="main">
+    <div class="container">
+        <h1 class="page-title">勤怠一覧</h1>
+
+        {{-- 月ナビ --}}
+        <div class="month-nav card">
+            <a class="prev" href="/attendance/list?month={{ $prev }}">
+                <span class="icon">←</span> 前月
+            </a>
+            <div class="current">
+                {{ $caption }}
+            </div>
+            <a class="next" href="/attendance/list?month={{ $next }}">
+                翌月 <span class="icon">→</span>
+            </a>
+        </div>
+
+        {{-- テーブル --}}
+        <div class="sheet card">
+            <table class="att-table">
+            <thead>
+                <tr>
+                    <th>日付</th>
+                    <th>出勤</th>
+                    <th>退勤</th>
+                    <th>休憩</th>
+                    <th>合計</th>
+                    <th>詳細</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach ($rows as $row)
+                {{-- $row: ['date'=>'06/01(木)','in'=>'09:00','out'=>'18:00','break'=>'1:00','total'=>'8:00','id'=>1] 想定 --}}
+                <tr>
+                    <td class="col-date">
+                        {{ $row['date'] }}
+                        @if(!empty($row['is_pending']))
+                            <span class="badge-pending" aria-label="申請中">申請中</span>
+                        @endif
+                    </td>
+                    <td>{{ $row['in'] ?? ' ' }}</td>
+                    <td>{{ $row['out'] ?? ' ' }}</td>
+                    <td>{{ $row['break'] ?? ' ' }}</td>
+                    <td>{{ $row['total'] ?? ' ' }}</td>
+                    <td>
+                        @if (!empty($row['id']))
+                            <a class="link-detail" href="{{ url('/attendance/detail/'.$row['id']) }}">詳細</a>
+                        @else
+                            <a class="link-detail" href="{{ url('/attendance/detail/date/'.$row['ymd']) }}">詳細</a>
+                        @endif
+                    </td>
+                </tr>
+            @endforeach
+            </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+@endsection
