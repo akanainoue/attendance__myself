@@ -17,6 +17,16 @@
     php artisan db:seed
 <!-- 7. シンボリックリンク作成
     php artisan storage:link -->
+
+### ユーザーデータ
+管理者：  
+　　email: admin@example.com  
+　　password: password  
+スタッフ：  
+　　email: user1@example.com  
+　　name: ユーザー１  
+　　password: password
+  
     
 ### 使用技術
 + PHP8.1.33
